@@ -1,7 +1,7 @@
 [project]
 name = "chirper"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Twitter/X like web application built using Django."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
