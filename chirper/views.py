@@ -18,7 +18,7 @@ def post_chirp(request):
                 'username': chirp.user.username,
                 'message': chirp.message,
                 'created_at': chirp.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                'likes': 0
+                'like_counter' : chirp.like_counter,
             })
         return JsonResponse({'error': 'No message provided'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
