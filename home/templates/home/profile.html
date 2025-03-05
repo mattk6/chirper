@@ -8,9 +8,16 @@
 <body>
     <h1>{{ user.username }}'s Profile</h1>
     <p>Email: {{ user.email }} <a href="/accounts/logout">Log out</a></p>
-
+    <div>
+        <h3>Post a New Chirp</h3>
+        <form id="chirp-form" method="POST">
+            {% csrf_token %}
+            <textarea name="message" id="message" cols="30" rows="3" placeholder="What's on your mind?" required></textarea><br>
+            <button type="submit">Post Chirp</button>
+        </form>
+    </div>
     <div id="chirps-list">
-        <h2>Your Chirps</h2>
+        <h2>Your Chirps For You</h2>
         <ul>
             {% for chirp in chirps %}
                 <li id="chirp-{{ chirp.id }}">
@@ -23,14 +30,7 @@
         </ul>
     </div>
 
-    <div>
-        <h3>Post a New Chirp</h3>
-        <form id="chirp-form" method="POST">
-            {% csrf_token %}
-            <textarea name="message" id="message" cols="30" rows="3" placeholder="What's on your mind?" required></textarea><br>
-            <button type="submit">Post Chirp</button>
-        </form>
-    </div>
+
 
     <script>
         document.getElementById('chirp-form').addEventListener('submit', function(event) {
