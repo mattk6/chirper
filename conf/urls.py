@@ -22,5 +22,5 @@ from django.urls import include
 urlpatterns = [
     path("admin/", admin.site.urls),  # Django Admin Access
     path("", include("home.urls")),  # Redirect the root URL to the homepage. --> 'app'
-    path('accounts/', include('allauth.urls')),  # Allauth handles login/signup
+    path("accounts/", include("allauth.urls")),  # Allauth handles login/signup
 ]
