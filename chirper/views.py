@@ -13,10 +13,12 @@ def post_chirp(request):
         message = request.POST.get('message')
         if message:
             chirp = Chirp.objects.create(user=request.user, message=message)
+            # Make if statements for a chirp whose length is > 255 below???
             return JsonResponse({
                 'username': chirp.user.username,
                 'message': chirp.message,
-                'created_at': chirp.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                'created_at': chirp.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                # 'like_counter' : chirp.like_counter,
             })
         return JsonResponse({'error': 'No message provided'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
