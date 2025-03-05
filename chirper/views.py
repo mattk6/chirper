@@ -1,9 +1,28 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .models import Chirp
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+import pdb
 
-@login_required  # Ensure that the user is logged in before accessing the profile
+@csrf_exempt
+@login_required
+def post_chirp(request):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        if message:
+            chirp = Chirp.objects.create(user=request.user, message=message)
+            return JsonResponse({
+                'username': chirp.user.username,
+                'message': chirp.message,
+                'created_at': chirp.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+        return JsonResponse({'error': 'No message provided'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@login_required
 def profile_view(request):
 
-    user = request.user
-
-    return render(request, 'home/profile.html', {'user': user})
+    chirps = Chirp.objects.all()
+    return render(request, 'home/profile.html', {'chirps': chirps, 'user': request.user})
