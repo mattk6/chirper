@@ -7,6 +7,6 @@ def home(request):
 
 
 
-@login_required  # Ensure that the user is logged in before accessing the profile
 def profile_view(request):
-    return render(request, 'profile.html')
+    user = request.user
+    return render(request, 'home/profile.html', {'user': user})
