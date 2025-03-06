@@ -23,6 +23,8 @@
                 <li id="chirp-{{ chirp.id }}">
                     <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }} 
                     <small>({{ chirp.created_at }})</small>
+                    <button class="like-button" data-chirp-id="{{ chirp.id }}">👍</button>
+                    <span class="like-count" id="like-count-{{ chirp.id }}">{{ chirp.likes|default:0 }}</span>
                 </li>
             {% empty %}
                 <li>No chirps yet!</li>
@@ -67,6 +69,26 @@
                 } else {
                     alert('Error posting chirp');
                 }
+            });
+        });
+
+        // Add event listeners to like buttons
+        document.querySelectorAll('.like-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const chirpId = this.getAttribute('data-chirp-id');
+                
+                fetch(`/chirps/profile/chirp/${chirpId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.likes) {
+                        document.getElementById(`like-count-${chirpId}`).textContent = data.likes;
+                    }
+                });
             });
         });
     </script>
