@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+<h1>{{ user.username }}'s Profile</h1>
+<p>Email: {{ user.email }} <a href="/accounts/logout">Log out</a></p>
+
+<div>
+    <h3>Post a New Chirp</h3>
+    <form id="chirp-form" method="POST">
+        {% csrf_token %}
+        <textarea name="message" id="message" cols="30" rows="3" placeholder="What's on your mind?" required></textarea><br>
+        <button type="submit">Post Chirp</button>
+    </form>
+</div>
+
+<div id="chirps-list">
+    <h2>Your Chirps</h2>
+    <ul>
+        {% for chirp in chirps %}
+            <li id="chirp-{{ chirp.id }}">
+                <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }}
+                <small>({{ chirp.created_at }})</small>
+                <button class="like-button" data-chirp-id="{{ chirp.id }}">👍</button>
+                <span class="like-count" id="like-count-{{ chirp.id }}">{{ chirp.likes|default:0 }}</span>
+            </li>
+        {% empty %}
+            <li>No chirps yet!</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/chirps/');
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const chirpId = data.chirp_id;
+            const likes = data.likes;
+
+            document.getElementById(`like-count-${chirpId}`).textContent = likes;
+        };
+
+        socket.onopen = function(e) {
+            console.log('WebSocket connection established');
+        };
+
+        socket.onclose = function(e) {
+            console.log('WebSocket connection closed unexpectedly');
+        };
+
+        socket.onerror = function(e) {
+            console.error('WebSocket encountered an error: ', e);
+        };
+
+        // Add event listeners to like buttons
+        document.querySelectorAll('.like-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const chirpId = this.getAttribute('data-chirp-id');
+
+                socket.send(JSON.stringify({
+                    'chirp_id': chirpId
+                }));
+            });
+        });
+    });
+
+    document.getElementById('chirp-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const message = document.getElementById('message').value;
+
+        console.log('Posting message:', message);
+
+        fetch("{% url 'post_chirp' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: 'message=' + encodeURIComponent(message)
+        })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('message').value = '';
+                } else {
+                    alert('Error posting chirp');
+                }
+            });
+    });
+</script>
+</body>
+</html>

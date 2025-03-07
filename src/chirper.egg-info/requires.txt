@@ -1,0 +1,12 @@
+django>=5.1.5
+django-allauth>=65.4.1
+django-redis>=5.4.0
+channels>=4.2.0
+asgiref>=3.8.1
+numpy>=2.1.1
+matplotlib>=3.9.2
+opencv-python>=4.11.0.86
+pillow>=10.4.0
+requests>=2.32.3
+aiohttp>=3.11.13
+black>=25.1.0
