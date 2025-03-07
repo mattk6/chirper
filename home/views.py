@@ -1,6 +1,12 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from chirper.models import Chirp
 
-
-# Create your views here.
 def home(request):
     return render(request, "home/home.html")
+
+@login_required
+def profile_view(request):
+
+    chirps = Chirp.objects.all()
+    return render(request, 'home/profile.html', {'chirps': chirps, 'user': request.user})
