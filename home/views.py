@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from chirper.models import Chirp
 
 def home(request):
-    return render(request, "home/index.html")
+    return render(request, "home/home.html")
 
 @login_required
 def profile_view(request):
