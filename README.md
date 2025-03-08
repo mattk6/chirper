@@ -19,7 +19,10 @@
 
     `pip install -r requirements.txt` to install all necessary Python packages.
 
-3. **Features For Chirper:**
+
+## Features:
+
+3. **What does Chirper allow you to do?**
 
     * Chirper allows for users to sign up.
     * Chirper allows for users to log in.
