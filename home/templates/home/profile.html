@@ -33,15 +33,30 @@
     <div id="chirps-list">
         <ul>
             {% for chirp in chirps %}
-                <li id="chirp-{{ chirp.id }}">
-                    <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }} 
-                    <small>({{ chirp.created_at }})</small>
-                    <button class="like-button" data-chirp-id="{{ chirp.id }}">👍</button>
-                    <span class="like-count" id="like-count-{{ chirp.id }}">{{ chirp.likes|default:0 }}</span>
-                </li>
-            {% empty %}
-                <li>No chirps yet!</li>
-            {% endfor %}
+                <div class="chirp">
+                    <!-- Display main chirp -->
+                    <p>{{ chirp.user.username }}: {{ chirp.message }}</p>
+                    <p>{{ chirp.created_at }}</p>
+                    <p>Likes: {{ chirp.likes }}</p>
+
+                    <!-- Form to post a reply -->
+                    <form method="POST" action="{% url 'post_reply' chirp.id %}">
+                    <textarea name="message" placeholder="Write a reply..."></textarea>
+                    <button type="submit">Reply</button>
+                    </form>
+
+                    <!-- Display replies under this chirp -->
+                    <div class="replies">
+                    {% for reply in chirp.replies.all %}
+                        <div class="reply">
+                        <p>{{ reply.user.username }}: {{ reply.message }}</p>
+                        <p>{{ reply.created_at }}</p>
+                        <p>Likes: {{ reply.likes }}</p>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
         </ul>
     </div>
 
