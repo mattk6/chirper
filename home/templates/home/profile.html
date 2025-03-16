@@ -1,115 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        {% block title %}<title>Chirper - Home</title>{% endblock %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>chirper</h1>
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle" checked>
+                <span class="slider"></span>
+            </label>
+            <p></p>
+            <p>
+                User: {{ user.username }}
+                <br>
+                {{ user.email }}
+                <br>
+                <a href="/accounts/logged_out">Log out</a>
+            </p>
+        </header>
+        <main>
+            <div>
+                <form id="chirp-form" method="POST" action="{% url 'chirper:post_chirp' %}">
+                    {% csrf_token %}
+                        <textarea id="message" name="message" rows="4" cols="50" placeholder="What's on your mind?" maxlength="255" required></textarea>
+                        {% if form.message.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.message.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    <button type="submit">Post Chirp</button>
+                </form>
+            </div>
+            <div id="chirps-list">
+                <ul>
+                    {% for chirp in chirps %}
+                        <li id="chirp-{{ chirp.id }}">
+                            <div class="chirp-container">
+                                <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }}
+                                <small style="color: gray">({{ chirp.created_at }})</small>
+                                {% include 'partials/like_count.html' %}
+                                <a href="#" class="reply-link" data-chirp-id="{{ chirp.id }}">Reply</a>
+                            </div>
 
-<head>
-    {% block title %}
-      <title>Chirper - Home</title>
-    {% endblock %}
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/styles.css">
-</head>
+                        
+<div class="reply-form-container" id="reply-form-container-{{ chirp.id }}" style="display: none;">
+    <form hx-post="{% url 'chirper:reply_to_chirp' chirp.id %}" hx-target="#replies-{{ chirp.id }}" hx-swap="afterbegin" hx-on::after-request="this.closest('.reply-form-container').style.display='none';">
+        {% csrf_token %}
+        <textarea id="message" name="message" rows="3" cols="50" placeholder="Write your reply..." maxlength="255"></textarea>
+        <button type="submit">Post Reply</button>
+    </form>
+</div>                        
+                        
+                        
+<div id="replies-{{ chirp.id }}" style="display: block; clear: both;">
+    {% for reply in chirp.replies.all %}
+        <div class="reply" style="margin-left: 20px;">
+            <strong>{{ reply.user.username }}</strong>: {{ reply.message }}
+            <small style="color: gray"> ({{ reply.created_at }}) </small>
+            <form method="POST" action="{% url 'chirper:like_chirp' reply.id %}" class="like-form" name="like-form">
+                {% csrf_token %}
+                <button type="submit">👍</button>
+                <span id="like-count-{{ reply.id }}">{{ reply.likes|default:0 }}</span>
+            </form>
+        </div>
+    {% endfor %}
+</div>                        
+                        
+                        
+                        
+                        </li>
+                    {% empty %}
+                        <li>No chirps yet!</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </main>
+    </body>
 
-<body>
-    <!-- Header Section -->
-    <header>
-        <h1>chirper</h1>
-        <!-- Light/Dark Mode Toggle Slider -->
-        <label class="switch">
-            <input type="checkbox" id="theme-toggle" checked> <!-- Added 'checked' to start in dark mode -->
-            <span class="slider"></span>
-        </label>
-        <p></p>
-        <p>User: {{ user.username }}<br>{{ user.email }}<br><a href="/accounts/logged_out">Log out</a></p>
-    </header>
+<script src="https://unpkg.com/htmx.org"></script>
+<script src="/static/script.js"></script>
 
-    <!-- Main Content -->
-    <main>
-    <div>
-        <br>
-        <form id="chirp-form" method="POST">
-            {% csrf_token %}
-            <textarea name="message" id="message" cols="30" rows="3" placeholder="What's on your mind?" required></textarea><br>
-            <button type="submit">Post Chirp</button>
-        </form>
-    </div>
-    <div id="chirps-list">
-        <ul>
-            {% for chirp in chirps %}
-                <li id="chirp-{{ chirp.id }}">
-                    <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }} 
-                    <small>({{ chirp.created_at }})</small>
-                    <button class="like-button" data-chirp-id="{{ chirp.id }}">👍</button>
-                    <span class="like-count" id="like-count-{{ chirp.id }}">{{ chirp.likes|default:0 }}</span>
-                </li>
-            {% empty %}
-                <li>No chirps yet!</li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    </main>
-
-
-    <script>
-        document.getElementById('chirp-form').addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the default form submission
-            const message = document.getElementById('message').value;
-
-            // Log the message to ensure it's being captured
-            console.log('Posting message:', message);
-
-            
-            // Send the new chirp to the server via AJAX
-            fetch("{% url 'post_chirp' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: 'message=' + encodeURIComponent(message)
-            })
-            .then(response => response.json())
-            .then(data => {
-                        // Log the response to ensure the data is coming back
-                console.log('Received response:', data);
-
-                if (data.username) {
-                    // Create a new chirp element
-                    const chirpList = document.querySelector('ul');
-                    const newChirp = document.createElement('li');
-                    newChirp.innerHTML = `<strong>${data.username}</strong>: ${data.message} <small>(${data.created_at})</small>`;
-                    chirpList.prepend(newChirp);  // Add new chirp to the top of the list
-
-                    // Clear the textarea
-                    document.getElementById('message').value = '';  
-                } else {
-                    alert('Error posting chirp');
-                }
-            });
-        });
-
-        // Add event listeners to like buttons
-        document.querySelectorAll('.like-button').forEach(button => {
-            button.addEventListener('click', function() {
-                const chirpId = this.getAttribute('data-chirp-id');
-                
-                fetch(`/chirps/profile/chirp/${chirpId}/like/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.likes) {
-                        document.getElementById(`like-count-${chirpId}`).textContent = data.likes;
-                    }
-                });
-            });
-        });
-    </script>
-    <script src="/static/script.js"></script>
-</body>
 </html>

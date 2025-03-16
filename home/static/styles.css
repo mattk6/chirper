@@ -107,3 +107,37 @@ body.dark-mode header h1 {
     background-color: yellow;
     box-shadow: none;
 }
+
+form {
+    display: block;
+}
+
+#chirp-form {
+    display: block;
+    visibility: visible;
+}
+
+.reply {
+    margin-left: 20px;
+    border-left: 2px solid #ddd;
+    padding-left: 15px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.chirp-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.chirp-container .reply-link {
+    margin-left: 10px;
+    font-size: 0.9em;
+    text-decoration: none;
+}
+
+.chirp-container small {
+    margin-left: 10px;
+}

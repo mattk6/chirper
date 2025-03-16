@@ -1,0 +1,5 @@
+<form method="POST" action="{% url 'chirper:like_chirp' chirp.id %}" hx-post="{% url 'chirper:like_chirp' chirp.id %}" hx-swap="outerHTML" class="like-form" name="like-form">
+    {% csrf_token %}
+    <button type="submit">👍</button>
+    <span id="like-count-{{ chirp.id }}">{{ chirp.likes }}</span>
+</form>

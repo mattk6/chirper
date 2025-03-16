@@ -11,3 +11,25 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.classList.toggle("dark-mode");
     });
 });
+
+// Script to embed the reply form benith the targeted chirp
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.reply-link').forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault(); // Prevent the default link behavior
+            const chirpId = event.target.getAttribute('data-chirp-id'); // Get the chirp ID
+            const replyForm = document.getElementById(`reply-form-container-${chirpId}`);
+
+            // Toggle visibility
+            if (replyForm.style.display === 'none') {
+                replyForm.style.display = 'block';
+            } else {
+                replyForm.style.display = 'none';
+            }
+        });
+    });
+});
+
+document.addEventListener('htmx:configRequest', (event) => {
+    event.detail.headers['X-CSRFToken'] = document.querySelector('[name=csrfmiddlewaretoken]').value;
+});

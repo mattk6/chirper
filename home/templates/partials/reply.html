@@ -1,0 +1,9 @@
+<div class="reply" style="margin-left: 20px;">
+    <strong>{{ reply.user.username }}</strong>: {{ reply.message }}
+    <small style="color: gray"> ({{ reply.created_at }}) </small>
+    <form method="POST" action="{% url 'chirper:like_chirp' reply.id %}" class="like-form" name="like-form">
+        {% csrf_token %}
+        <button type="submit">👍</button>
+        <span id="like-count-{{ reply.id }}">{{ reply.likes|default:0 }}</span>
+    </form>
+</div>

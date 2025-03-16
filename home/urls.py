@@ -7,5 +7,6 @@ urlpatterns = [
     path("profile/", profile_view, name="profile"),
 
     path('admin/', admin.site.urls),
-    path('chirps/', include('chirper.urls')),  # Include chirp URLs
+    path('chirps/', include('chirper.urls')),
+
 ]

@@ -15,15 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from django import views
 from django.views.generic import TemplateView
+from chirper import views
 
 urlpatterns = [
     path("", include("home.urls")),  # Redirect the root URL to the homepage. --> 'app'
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/signup/', views.signup, name='signup'),  # Add signup path
+
     path('accounts/logged_out/', TemplateView.as_view(template_name='registration/logged_out.html'), name='logged_out'),
 
 ]
