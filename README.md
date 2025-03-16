@@ -17,7 +17,7 @@
 
 2.  **Install dependencies:**
 
-    `pip install -r requirements.txt` to install all necessary Python packages.
+    `uv run poetry install` to install all necessary Python packages.
 
 
 ## Features:

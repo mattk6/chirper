@@ -1,14 +1,12 @@
 install:
-	pip install -r requirements.txt
+	uv run poetry install
 
 run:
 	clear
-	uv run python3 manage.py runserver
-
-update:
-	uv run python3 manage.py makemigrations chirper
+	uv run poetry run python manage.py runserver
 
 migrate:
+	uv run python3 manage.py makemigrations chirper
 	uv run python3 manage.py migrate
 
 shell:
