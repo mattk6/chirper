@@ -1,8 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User  
+
+from django.conf import settings
+
 
 class Chirp(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+
     message = models.CharField(max_length=255)  
     created_at = models.DateTimeField(auto_now_add=True) 
     likes = models.IntegerField(default=0)  # Add this line

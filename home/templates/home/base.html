@@ -1,0 +1,63 @@
+<!-- base.html 
+     Matthew Kruse, Grant Wells
+     The html template for Chirper pages.
+     15 March 2025
+    -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block title %}
+      <title>Chirper - Home</title>
+    {% endblock %}
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>chirper</h1>
+        <!-- Light/Dark Mode Toggle Slider -->
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle" checked> <!-- Added 'checked' to start in dark mode -->
+            <span class="slider"></span>
+        </label>
+    </header>
+
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-10 ">{% block content %}{% endblock %}
+            {% block pagination %}
+                {% if is_paginated %}
+                    <div class="pagination">
+                        <span class="page-links">
+                            {% if page_obj.has_previous %}
+                                <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                            </span>
+                            {% if page_obj.has_next %}
+                                <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+              {% endblock %}
+        </div>
+      </div>
+    </div>
+    
+
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

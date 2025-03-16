@@ -19,10 +19,11 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from django import views
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),  # Django Admin Access
     path("", include("home.urls")),  # Redirect the root URL to the homepage. --> 'app'
-    path("accounts/", include("allauth.urls")),  # Allauth handles login/signup
-   
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/logged_out/', TemplateView.as_view(template_name='registration/logged_out.html'), name='logged_out'),
+
 ]

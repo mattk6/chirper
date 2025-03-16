@@ -2,13 +2,17 @@ install:
 	pip install -r requirements.txt
 
 run:
-	uv run daphne conf.asgi:application
+	clear
+	uv run python3 manage.py runserver
 
 update:
 	uv run python3 manage.py makemigrations chirper
 
 migrate:
 	uv run python3 manage.py migrate
+
+shell:
+	uv run python3 manage.py shell
 
 sql:
 	sqlite3 db.sqlite3
@@ -21,3 +25,6 @@ redis:
 
 freeze:
 	pip freeze > requirements.txt
+
+superuser:
+	uv run python3 manage.py createsuperuser
