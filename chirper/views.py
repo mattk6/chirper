@@ -1,3 +1,8 @@
+# chirper/views.py
+# Grant Wells, Matthew Kruse
+# Views for chirper app, including signup, profile, and chirp actions
+# 16 March 2025
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ChirpForm, ReplyForm, CustomUserCreationForm
 from .models import Chirp
