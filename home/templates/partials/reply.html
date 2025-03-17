@@ -1,6 +1,19 @@
+<!-- reply.html
+     Matthew Kruse
+     Server side template used for rendering individual replies to chirps
+     16 March 2025
+-->
+
+<!--
+This server-side partial template is used by the reply_to_chirp view to render an individual reply for a chirp.
+It includes the reply message, user details, timestamp, and a like button with functionality.
+Designed for use with HTMX, this injects updated reply content without requiring a full page reload.
+-->
 <div class="reply" style="margin-left: 20px;">
+    <!-- Reply contents -->
     <strong>{{ reply.user.username }}</strong>: {{ reply.message }}
     <small style="color: gray"> ({{ reply.created_at }}) </small>
+    <!-- Reply like button and count -->
     <form method="POST" action="{% url 'chirper:like_chirp' reply.id %}" class="like-form" name="like-form">
         {% csrf_token %}
         <button type="submit">👍</button>

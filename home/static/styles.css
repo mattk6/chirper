@@ -108,6 +108,7 @@ body.dark-mode header h1 {
     box-shadow: none;
 }
 
+/* Forms */
 form {
     display: block;
 }
@@ -125,6 +126,7 @@ form {
     color: #555;
 }
 
+/* Chirp Container styling */
 .chirp-container {
     display: flex;
     align-items: center;

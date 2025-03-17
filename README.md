@@ -1,4 +1,3 @@
-
 ## Prerequisites
 
 * Python 3.12 or higher
@@ -29,6 +28,8 @@
     * Chirper allows for users to log out.
     * Chirper allows for the user to make a chirp.
     * Chirper allows for the user to see what time they made the chirp.
-    * Chirper allows for the user to like chirps.
+    * Chirper allows for the user to like chirps and replies.
+    * Chirper allows for the user to reply to chirps.
+    * Chirper automatically refreshes your chirp data without refreshing the page.
     * Chirper has a nice design to it.
-    * Chirper allows for the user to switch between light/dark mode via a slider that is dynamic based on the theme. 
+    * Chirper allows for the user to switch between light/dark mode via a slider that is dynamic based on the theme.

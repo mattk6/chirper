@@ -5,59 +5,120 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-def profile(request):
-    chirps = Chirp.objects.filter(parent=None).order_by('-created_at')  # Filter for chirps with no parent
-    if request.method == 'GET':
-        form = ChirpForm()
-    else:
-        form = None
-    context = {'chirps': chirps, 'form': form}
-    return render(request, 'home/profile.html', context)
-
-
 def signup(request):
+    """
+    Handle user signup.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered signup page or redirect to login.
+    """
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        # If the form input is valid, save the user
         if form.is_valid():
             form.save()
+
+            # Redirect to login page after successful signup
             return redirect('login')
     else:
+        # reamin on the signup page if form input is invalid
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 @login_required
+def profile(request):
+    """
+    Render the profile page with chirps.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered profile page with chirps.
+    """
+    # Get all chirps that are not replies
+    chirps = Chirp.objects.filter(parent=None).order_by('-created_at')
+    form = ChirpForm()
+    context = {'chirps': chirps, 'form': form}
+    return render(request, 'home/profile.html', context)
+
+
+@login_required
 def post_chirp(request):
+    """
+    Handle posting a new chirp.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered profile page or redirect to profile.
+    """
+
+    # Process the form data if the request method is POST
     if request.method == "POST":
         form = ChirpForm(request.POST)
         if form.is_valid():
             chirp = form.save(commit=False)
             chirp.user = request.user
             chirp.save()
-            return redirect('chirper:profile')  # Namespaced redirect
+            # Redirect to the profile page after posting a chirp
+            return redirect('chirper:profile')
         else:
+            # If the form is invalid, render the profile page again
             return render(request, 'home/profile.html', {'form': form})
     else:
+        # A GET request renders the profile page with the form
         form = ChirpForm()
         return render(request, 'home/profile.html', {'form': form})
 
+
+from django.template import RequestContext  # Import RequestContext
+
 @login_required
 def like_chirp(request, chirp_id):
+    """
+    Handle liking for chirps and replies.
+
+    Args:
+        request: The HTTP request object.
+        chirp_id: The ID of the chirp to like.
+
+    Returns:
+        HttpResponse: The updated like count or redirect to profile.
+    """
+    # Increase like count for the message identified by chirp_id
     if request.method == 'POST':
         chirp = get_object_or_404(Chirp, id=chirp_id)
         chirp.likes += 1
         chirp.save()
 
+    # Perform HTMX processing to update the like count
     if request.headers.get('HX-Request'):
         html = render_to_string('partials/like_count.html', {'chirp': chirp})
         return HttpResponse(html)
 
-    return redirect('chirper:profile')  # Namespaced redirect
+    return redirect('chirper:profile')
 
 @login_required
 def reply_to_chirp(request, chirp_id):
-    parent_chirp = get_object_or_404(Chirp, id=chirp_id)
-    print(f"Parent chirp ID: {parent_chirp.id}")
+    """
+    Handle replying to a chirp.
 
+    Args:
+        request: The HTTP request object.
+        chirp_id: The ID of the chirp to reply to.
+
+    Returns:
+        HttpResponse: The rendered reply or redirect to profile.
+    """
+    # Get the parent chirp
+    parent_chirp = get_object_or_404(Chirp, id=chirp_id)
+
+    # Only perform actions on POST requests
     if request.method == 'POST':
         form = ReplyForm(request.POST)
         if form.is_valid():
@@ -66,18 +127,16 @@ def reply_to_chirp(request, chirp_id):
             reply.parent = parent_chirp
             reply.save()
 
-            print(f"Reply message: {reply.message}")
-            print(f"Reply parent ID: {reply.parent.id}")
-
-            print("Reply created")
+            # Use HTMX to update the page
             if request.headers.get('HX-Request'):
-                # Return the HTML for the new reply for HTMX requests
+                # Use the partials/reply.html template to render the reply
                 return render(request, 'partials/reply.html', {'reply': reply})
             else:
                 return redirect('chirper:profile')
         else:
-            print(f"Form errors: {form.errors}")
+            # If the form is invalid, render the profile page again
             return render(request, 'home/profile.html', {'form': form, 'parent_chirp': parent_chirp})
     else:
+        # No POST is happening, render the profile page with the form
         form = ReplyForm()
         return render(request, 'home/profile.html', {form: form, 'parent_chirp': parent_chirp})

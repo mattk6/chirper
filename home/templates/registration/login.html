@@ -1,7 +1,16 @@
+<!-- login.html
+     Matthew Kruse
+     Page to log in to Chirper
+     16 March 2025
+-->
+
+<!-- Login Page, utilizing the base template -->
 {% extends "home/base.html" %}
 
+<!-- Main Content -->
 {% block content %}
 
+<!-- Form validations -->
   {% if form.errors %}
     <p>Your username and password didn't match. Please try again.</p>
   {% endif %}
@@ -15,7 +24,8 @@
     {% endif %}
   {% endif %}
 
-  <form method="post" action="{% url 'login' %}">
+<!-- Login Form -->
+<form method="post" action="{% url 'login' %}">
     {% csrf_token %}
     <table>
       <tr>

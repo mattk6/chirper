@@ -1,5 +1,12 @@
+<!-- profile.html
+     Matthew Kruse
+     Single page for user profile, displaying chirps and replies   
+     16 March 2025
+-->
+
 <!DOCTYPE html>
 <html lang="en">
+    <!-- TODO: resolve base template to work with authenticated sessions -->
     <head>
         {% block title %}<title>Chirper - Home</title>{% endblock %}
         <meta charset="UTF-8">
@@ -22,8 +29,10 @@
                 <a href="/accounts/logged_out">Log out</a>
             </p>
         </header>
+
         <main>
             <div>
+                <!-- Chirp Form --> 
                 <form id="chirp-form" method="POST" action="{% url 'chirper:post_chirp' %}">
                     {% csrf_token %}
                         <textarea id="message" name="message" rows="4" cols="50" placeholder="What's on your mind?" maxlength="255" required></textarea>
@@ -37,43 +46,44 @@
                     <button type="submit">Post Chirp</button>
                 </form>
             </div>
+
+            <!-- Chirp List --> 
             <div id="chirps-list">
                 <ul>
                     {% for chirp in chirps %}
+                        <!-- Unique container for rendering the chirp, likes and replies --> 
                         <li id="chirp-{{ chirp.id }}">
                             <div class="chirp-container">
+                                <!-- Chirp attributes --> 
                                 <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }}
                                 <small style="color: gray">({{ chirp.created_at }})</small>
+                                <!-- Chirp like button & like count--> 
                                 {% include 'partials/like_count.html' %}
+                                <!-- Chirp reply link --> 
                                 <a href="#" class="reply-link" data-chirp-id="{{ chirp.id }}">Reply</a>
                             </div>
-
-                        
-<div class="reply-form-container" id="reply-form-container-{{ chirp.id }}" style="display: none;">
-    <form hx-post="{% url 'chirper:reply_to_chirp' chirp.id %}" hx-target="#replies-{{ chirp.id }}" hx-swap="afterbegin" hx-on::after-request="this.closest('.reply-form-container').style.display='none';">
-        {% csrf_token %}
-        <textarea id="message" name="message" rows="3" cols="50" placeholder="Write your reply..." maxlength="255"></textarea>
-        <button type="submit">Post Reply</button>
-    </form>
-</div>                        
-                        
-                        
-<div id="replies-{{ chirp.id }}" style="display: block; clear: both;">
-    {% for reply in chirp.replies.all %}
-        <div class="reply" style="margin-left: 20px;">
-            <strong>{{ reply.user.username }}</strong>: {{ reply.message }}
-            <small style="color: gray"> ({{ reply.created_at }}) </small>
-            <form method="POST" action="{% url 'chirper:like_chirp' reply.id %}" class="like-form" name="like-form">
-                {% csrf_token %}
-                <button type="submit">👍</button>
-                <span id="like-count-{{ reply.id }}">{{ reply.likes|default:0 }}</span>
-            </form>
-        </div>
-    {% endfor %}
-</div>                        
-                        
-                        
-                        
+                            
+                            <!-- Chirp reply form container-->
+                            <div class="reply-form-container" id="reply-form-container-{{ chirp.id }}" style="display: none;">
+                                <!-- Reply input and submit form --> 
+                                <form hx-post="{% url 'chirper:reply_to_chirp' chirp.id %}" hx-target="#replies-{{ chirp.id }}" hx-swap="afterbegin" hx-on::after-request="this.closest('.reply-form-container').style.display='none';">
+                                    {% csrf_token %}
+                                    <textarea id="message" name="message" rows="3" cols="50" placeholder="Write your reply..." maxlength="255"></textarea>
+                                    <button type="submit">Post Reply</button>
+                                </form>
+                            </div>                        
+                            
+                            <!-- List of replies for the chirp --> 
+                            <div id="replies-{{ chirp.id }}" style="display: block; clear: both;">
+                                {% for reply in chirp.replies.all %}
+                                    <div class="reply" style="margin-left: 20px;">
+                                        <strong>{{ reply.user.username }}</strong>: {{ reply.message }}
+                                        <small style="color: gray"> ({{ reply.created_at }}) </small>
+                                        <!-- Reply like button and count --> 
+                                        {% include 'partials/like_count.html' with chirp=reply %}  {# Use include with chirp=reply #}
+                                    </div>
+                                {% endfor %}
+                            </div>                        
                         </li>
                     {% empty %}
                         <li>No chirps yet!</li>

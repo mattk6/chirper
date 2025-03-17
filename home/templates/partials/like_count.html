@@ -1,3 +1,13 @@
+<!-- like_count.html
+     Matthew Kruse
+     Partial template used for embedding form to like chirps and replies
+     16 March 2025
+-->
+
+<!-- 
+This partial template renders the like button and the like count for a specific chirp or reply. It is designed to be 
+dynamically updated using HTMX to refresh the like count without reloading the page. 
+-->
 <form method="POST" action="{% url 'chirper:like_chirp' chirp.id %}" hx-post="{% url 'chirper:like_chirp' chirp.id %}" hx-swap="outerHTML" class="like-form" name="like-form">
     {% csrf_token %}
     <button type="submit">👍</button>

@@ -33,7 +33,10 @@
       <div class="row">
         <div class="col-sm-2">
         </div>
+        <!-- This is the block that will be filled with the content of the child template -->
         <div class="col-sm-10 ">{% block content %}{% endblock %}
+
+            <!-- Potential Pagination feature -->
             {% block pagination %}
                 {% if is_paginated %}
                     <div class="pagination">
@@ -50,7 +53,7 @@
                         </span>
                     </div>
                 {% endif %}
-              {% endblock %}
+            {% endblock %}
         </div>
       </div>
     </div>

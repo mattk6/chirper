@@ -15,21 +15,27 @@ document.addEventListener("DOMContentLoaded", function () {
 // Script to embed the reply form benith the targeted chirp
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reply-link').forEach(link => {
+        // Add an event listener to each reply link
         link.addEventListener('click', event => {
-            event.preventDefault(); // Prevent the default link behavior
-            const chirpId = event.target.getAttribute('data-chirp-id'); // Get the chirp ID
+            // Prevent the link from navigating to a new page
+            event.preventDefault(); 
+            // Get set the chirp id from the data attribute and get the reply form
+            const chirpId = event.target.getAttribute('data-chirp-id'); 
             const replyForm = document.getElementById(`reply-form-container-${chirpId}`);
 
-            // Toggle visibility
+            // Toggle the display of the reply form
             if (replyForm.style.display === 'none') {
+                // Display the reply form
                 replyForm.style.display = 'block';
             } else {
+                // Hide the reply form
                 replyForm.style.display = 'none';
             }
         });
     });
 });
 
+// Add CSRF token to all htmx requests
 document.addEventListener('htmx:configRequest', (event) => {
     event.detail.headers['X-CSRFToken'] = document.querySelector('[name=csrfmiddlewaretoken]').value;
 });

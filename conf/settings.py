@@ -17,8 +17,8 @@ from django.urls import reverse_lazy
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Set up redirects for login and logout
 LOGIN_REDIRECT_URL = ( "/profile" )
-
 LOGOUT_REDIRECT_URL = '/accounts/logged_out/'
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -66,6 +66,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.csrf",
             ],
         },
     },
