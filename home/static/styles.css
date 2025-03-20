@@ -3,7 +3,7 @@
     Styling page using css. Current implements:
         * Light/Dark Mode toggle
         * Like button styles
-    Last Updated: March 19, 2025
+    Last Updated: March 20, 2025
 */
 
 /* ================================
@@ -47,6 +47,8 @@ body.dark-mode header {
 header h1 {
     color: #ff8800;
     /* Warm orange */
+    justify-self: start;
+    margin: 0;
 }
 
 /* Dark mode header title */

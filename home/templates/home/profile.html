@@ -13,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/static/styles.css">
     </head>
-    <body>
+    <body align="center">
         <header>
             <h1>Chirper</h1>
             <label class="switch">
@@ -30,7 +30,7 @@
             </p>
         </header>
 
-        <main>
+        <main align="center">
             <div>
                 <!-- Chirp Form --> 
                 <form id="chirp-form" method="POST" action="{% url 'chirper:post_chirp' %}">
@@ -53,7 +53,7 @@
                     {% for chirp in chirps %}
                         <!-- Unique container for rendering the chirp, likes and replies --> 
                         <li id="chirp-{{ chirp.id }}">
-                            <div class="chirp-container">
+                            <div justify-items="right" class="chirp-container">
                                 <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }}
                                 <small style="color: gray">({{ chirp.created_at }})</small>
                         
