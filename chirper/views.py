@@ -1,11 +1,11 @@
 # chirper/views.py
-# Grant Wells, Matthew Kruse
+# Grant Wells, Matthew Kruse, David Marin
 # Views for chirper app, including signup, profile, and chirp actions
-# 16 March 2025
+# Last Updated: March 19, 2025
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ChirpForm, ReplyForm, CustomUserCreationForm
-from .models import Chirp
+from .models import Chirp, Like
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -86,7 +86,7 @@ from django.template import RequestContext  # Import RequestContext
 @login_required
 def like_chirp(request, chirp_id):
     """
-    Handle liking for chirps and replies.
+    Handles liking for chirps and replies. Ensures only one like per user.
 
     Args:
         request: The HTTP request object.
@@ -95,11 +95,28 @@ def like_chirp(request, chirp_id):
     Returns:
         HttpResponse: The updated like count or redirect to profile.
     """
-    # Increase like count for the message identified by chirp_id
-    if request.method == 'POST':
-        chirp = get_object_or_404(Chirp, id=chirp_id)
-        chirp.likes += 1
-        chirp.save()
+    # # Increase like count for the message identified by chirp_id
+    # if request.method == 'POST':
+    #     chirp = get_object_or_404(Chirp, id=chirp_id)
+    #     chirp.likes += 1
+    #     chirp.save()
+    chirp = get_object_or_404(Chirp, id=chirp_id)
+
+    # Check if user already liked chirp
+    like, created = Like.objects.get_or_create(user=request.user, chirp=chirp)
+
+    if not created:
+        # If user liked chirp or reply already, delete user's like
+        like.delete()
+    else:
+        # If user hasn't liked the chirp or reply yet, add the like by savving it
+        like.save()
+
+    # Recalculate the number of likes
+    chirp.likes = Like.objects.filter(chirp=chirp).count()
+
+    # Save updated count for likes
+    chirp.save()
 
     # Perform HTMX processing to update the like count
     if request.headers.get('HX-Request'):

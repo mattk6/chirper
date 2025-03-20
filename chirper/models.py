@@ -1,3 +1,9 @@
+# models.py
+# Matthew Kruse, Grant Wells, David Marin
+# Models for the database. Includes Chirp, and Like
+# Last Updated: March 19, 2025
+
+
 from django.db import models
 from django.conf import settings
 
@@ -29,3 +35,19 @@ class Chirp(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+#### Testing likes model
+class Like(models.Model):
+    """
+    Model representing a Like for a Chirp.
+    Each user can like a chirp only once.
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chirp = models.ForeignKey(Chirp, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'chirp')  # Ensure that each user can like a chirp only once
+
+    def __str__(self):
+        return f"{self.user.username} liked {self.chirp.message[:20]}"

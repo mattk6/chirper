@@ -1,7 +1,7 @@
 <!-- profile.html
-     Matthew Kruse
+     Matthew Kruse, David Marin
      Single page for user profile, displaying chirps and replies   
-     16 March 2025
+     Last Updated: March 19, 2025
 -->
 
 <!DOCTYPE html>
@@ -15,7 +15,7 @@
     </head>
     <body>
         <header>
-            <h1>chirper</h1>
+            <h1>Chirper</h1>
             <label class="switch">
                 <input type="checkbox" id="theme-toggle" checked>
                 <span class="slider"></span>
@@ -54,12 +54,13 @@
                         <!-- Unique container for rendering the chirp, likes and replies --> 
                         <li id="chirp-{{ chirp.id }}">
                             <div class="chirp-container">
-                                <!-- Chirp attributes --> 
                                 <strong>{{ chirp.user.username }}</strong>: {{ chirp.message }}
                                 <small style="color: gray">({{ chirp.created_at }})</small>
-                                <!-- Chirp like button & like count--> 
+                        
+                                <!-- Include the like button for this chirp -->
                                 {% include 'partials/like_count.html' %}
-                                <!-- Chirp reply link --> 
+                        
+                                <!-- Reply link -->
                                 <a href="#" class="reply-link" data-chirp-id="{{ chirp.id }}">Reply</a>
                             </div>
                             
